@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Suresh Bantubilli – Profile</title>
+  <style>
+    /* ── Reset & base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --accent: #f59e0b;
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --radius: 12px;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.875rem 2rem;
+      box-shadow: 0 1px 6px rgba(0,0,0,.06);
+    }
+    .nav-brand {
+      font-weight: 700;
+      font-size: 1.125rem;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 1.75rem; list-style: none; }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 0.925rem;
+      font-weight: 500;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--primary); }
+
+    /* ── Sections ── */
+    section { padding: 5rem 2rem; }
+    .container { max-width: 1000px; margin: 0 auto; }
+    .section-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 2.5rem;
+      text-align: center;
+      position: relative;
+    }
+    .section-title::after {
+      content: '';
+      display: block;
+      width: 48px;
+      height: 4px;
+      background: var(--primary);
+      border-radius: 2px;
+      margin: 0.5rem auto 0;
+    }
+
+    /* ── Hero ── */
+    #hero {
+      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 60%, #3b82f6 100%);
+      color: #fff;
+      padding: 6rem 2rem 5rem;
+      text-align: center;
+    }
+    .hero-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.15);
+      border: 4px solid rgba(255,255,255,.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      margin: 0 auto 1.5rem;
+      color: #fff;
+      user-select: none;
+    }
+    #hero h1 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; letter-spacing: -0.5px; }
+    #hero .tagline {
+      font-size: 1.15rem;
+      opacity: .85;
+      margin-top: .5rem;
+      font-weight: 400;
+    }
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+      justify-content: center;
+      margin-top: 1.25rem;
+    }
+    .hero-badge {
+      background: rgba(255,255,255,.15);
+      border: 1px solid rgba(255,255,255,.3);
+      color: #fff;
+      border-radius: 999px;
+      padding: .3rem .9rem;
+      font-size: .8rem;
+      font-weight: 500;
+    }
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      margin-top: 2rem;
+      padding: .75rem 1.75rem;
+      background: var(--accent);
+      color: #1e293b;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: .95rem;
+      transition: opacity .2s;
+    }
+    .hero-cta:hover { opacity: .9; }
+
+    /* ── About ── */
+    #about { background: var(--surface); }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5rem;
+      align-items: start;
+    }
+    @media (max-width: 640px) { .about-grid { grid-template-columns: 1fr; } }
+    .about-text p { color: var(--muted); margin-bottom: 1rem; }
+    .about-text p:last-child { margin-bottom: 0; }
+    .info-list { list-style: none; }
+    .info-list li {
+      display: flex;
+      gap: .75rem;
+      align-items: flex-start;
+      padding: .6rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: .9rem;
+    }
+    .info-list li:last-child { border-bottom: none; }
+    .info-icon { font-size: 1rem; flex-shrink: 0; }
+    .info-label { font-weight: 600; color: var(--text); min-width: 80px; }
+    .info-value { color: var(--muted); }
+
+    /* ── Skills ── */
+    #skills { background: var(--bg); }
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+    .skill-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: .875rem;
+      transition: box-shadow .2s, transform .2s;
+    }
+    .skill-card:hover {
+      box-shadow: 0 4px 16px rgba(37,99,235,.12);
+      transform: translateY(-2px);
+    }
+    .skill-icon { font-size: 1.6rem; flex-shrink: 0; }
+    .skill-name { font-weight: 600; font-size: .95rem; }
+    .skill-level { font-size: .75rem; color: var(--muted); margin-top: 2px; }
+
+    /* ── Projects ── */
+    #projects { background: var(--surface); }
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+    .project-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: .75rem;
+      transition: box-shadow .2s, transform .2s;
+    }
+    .project-card:hover {
+      box-shadow: 0 6px 24px rgba(37,99,235,.14);
+      transform: translateY(-3px);
+    }
+    .project-header { display: flex; align-items: center; gap: .75rem; }
+    .project-icon { font-size: 1.75rem; }
+    .project-title { font-size: 1.05rem; font-weight: 700; }
+    .project-desc { font-size: .875rem; color: var(--muted); flex: 1; }
+    .project-tags { display: flex; flex-wrap: wrap; gap: .4rem; }
+    .project-tag {
+      background: #eff6ff;
+      color: var(--primary);
+      border-radius: 999px;
+      padding: .2rem .7rem;
+      font-size: .75rem;
+      font-weight: 500;
+    }
+    .project-link {
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+      color: var(--primary);
+      text-decoration: none;
+      font-size: .85rem;
+      font-weight: 600;
+      margin-top: auto;
+    }
+    .project-link:hover { text-decoration: underline; }
+
+    /* ── Contact ── */
+    #contact { background: var(--bg); }
+    .contact-cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+    .contact-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 2rem;
+      text-align: center;
+      text-decoration: none;
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .5rem;
+      min-width: 160px;
+      transition: box-shadow .2s, transform .2s;
+    }
+    .contact-card:hover {
+      box-shadow: 0 4px 16px rgba(37,99,235,.12);
+      transform: translateY(-2px);
+    }
+    .contact-card-icon { font-size: 2rem; }
+    .contact-card-label { font-weight: 600; font-size: .9rem; }
+    .contact-card-value { font-size: .8rem; color: var(--muted); }
+
+    /* ── Footer ── */
+    footer {
+      background: #1e293b;
+      color: rgba(255,255,255,.6);
+      text-align: center;
+      padding: 1.5rem 2rem;
+      font-size: .85rem;
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+  <!-- ══ Navigation ══ -->
+  <nav>
+    <a href="#hero" class="nav-brand">Suresh Bantubilli</a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- ══ Hero ══ -->
+  <section id="hero">
+    <div class="container">
+      <div class="hero-avatar">SB</div>
+      <h1>Suresh Bantubilli</h1>
+      <p class="tagline">Python Developer &amp; Web Enthusiast · Building meaningful applications</p>
+      <div class="hero-badges">
+        <span class="hero-badge">🐍 Python</span>
+        <span class="hero-badge">🌐 HTML / CSS</span>
+        <span class="hero-badge">🤖 AI Prompting</span>
+        <span class="hero-badge">☁️ Open Source</span>
+      </div>
+      <a href="#projects" class="hero-cta">View My Work ↓</a>
+    </div>
+  </section>
+
+  <!-- ══ About ══ -->
+  <section id="about">
+    <div class="container">
+      <h2 class="section-title">About Me</h2>
+      <div class="about-grid">
+        <div class="about-text">
+          <p>
+            Hi! I'm <strong>Suresh Bantubilli</strong>, a passionate developer who loves building
+            purposeful software — from cultural event platforms and astrology tools to AI-powered
+            utilities and creative web experiences.
+          </p>
+          <p>
+            I enjoy blending technology with culture and creativity. My projects reflect a deep
+            appreciation for Indian heritage as well as a forward-looking interest in artificial
+            intelligence and modern web development.
+          </p>
+          <p>
+            I'm always learning, always building, and always looking for the next meaningful
+            problem to solve.
+          </p>
+        </div>
+        <ul class="info-list">
+          <li>
+            <span class="info-icon">💼</span>
+            <span class="info-label">Role</span>
+            <span class="info-value">Software Developer</span>
+          </li>
+          <li>
+            <span class="info-icon">🐍</span>
+            <span class="info-label">Languages</span>
+            <span class="info-value">Python, HTML, CSS</span>
+          </li>
+          <li>
+            <span class="info-icon">🌏</span>
+            <span class="info-label">Location</span>
+            <span class="info-value">India</span>
+          </li>
+          <li>
+            <span class="info-icon">🚀</span>
+            <span class="info-label">Interests</span>
+            <span class="info-value">AI, Web Dev, Indian Culture</span>
+          </li>
+          <li>
+            <span class="info-icon">📂</span>
+            <span class="info-label">GitHub</span>
+            <span class="info-value">Ssureshbantubilli</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ Skills ══ -->
+  <section id="skills">
+    <div class="container">
+      <h2 class="section-title">Skills &amp; Technologies</h2>
+      <div class="skills-grid">
+        <div class="skill-card">
+          <span class="skill-icon">🐍</span>
+          <div>
+            <div class="skill-name">Python</div>
+            <div class="skill-level">Primary Language</div>
+          </div>
+        </div>
+        <div class="skill-card">
+          <span class="skill-icon">🌐</span>
+          <div>
+            <div class="skill-name">HTML &amp; CSS</div>
+            <div class="skill-level">Web Development</div>
+          </div>
+        </div>
+        <div class="skill-card">
+          <span class="skill-icon">🤖</span>
+          <div>
+            <div class="skill-name">AI Prompting</div>
+            <div class="skill-level">Generative AI</div>
+          </div>
+        </div>
+        <div class="skill-card">
+          <span class="skill-icon">🔧</span>
+          <div>
+            <div class="skill-name">Git &amp; GitHub</div>
+            <div class="skill-level">Version Control</div>
+          </div>
+        </div>
+        <div class="skill-card">
+          <span class="skill-icon">📊</span>
+          <div>
+            <div class="skill-name">Data Handling</div>
+            <div class="skill-level">Python Libraries</div>
+          </div>
+        </div>
+        <div class="skill-card">
+          <span class="skill-icon">🎨</span>
+          <div>
+            <div class="skill-name">UI Design</div>
+            <div class="skill-level">Frontend Styling</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ Projects ══ -->
+  <section id="projects">
+    <div class="container">
+      <h2 class="section-title">Projects</h2>
+      <div class="projects-grid">
+
+        <div class="project-card">
+          <div class="project-header">
+            <span class="project-icon">🔮</span>
+            <span class="project-title">Jyotish App</span>
+          </div>
+          <p class="project-desc">
+            A Python-based Vedic astrology (Jyotish) application that brings the ancient science
+            of Indian astrology to a modern digital interface.
+          </p>
+          <div class="project-tags">
+            <span class="project-tag">Python</span>
+            <span class="project-tag">Astrology</span>
+            <span class="project-tag">Vedic</span>
+          </div>
+          <a class="project-link" href="https://github.com/Ssureshbantubilli/jyotish_app" target="_blank" rel="noopener">
+            View on GitHub →
+          </a>
+        </div>
+
+        <div class="project-card">
+          <div class="project-header">
+            <span class="project-icon">🌊</span>
+            <span class="project-title">Godavari Pushkaralu</span>
+          </div>
+          <p class="project-desc">
+            A Python project dedicated to the sacred Godavari Pushkaralu festival — providing
+            information and resources about this important cultural event.
+          </p>
+          <div class="project-tags">
+            <span class="project-tag">Python</span>
+            <span class="project-tag">Culture</span>
+            <span class="project-tag">Festival</span>
+          </div>
+          <a class="project-link" href="https://github.com/Ssureshbantubilli/GodavariPushkaralu" target="_blank" rel="noopener">
+            View on GitHub →
+          </a>
+        </div>
+
+        <div class="project-card">
+          <div class="project-header">
+            <span class="project-icon">🤖</span>
+            <span class="project-title">Easy Prompting</span>
+          </div>
+          <p class="project-desc">
+            A guide and toolkit for crafting effective prompts for generative AI systems,
+            making AI accessible and practical for everyday use.
+          </p>
+          <div class="project-tags">
+            <span class="project-tag">AI</span>
+            <span class="project-tag">Prompting</span>
+            <span class="project-tag">Generative AI</span>
+          </div>
+          <a class="project-link" href="https://github.com/Ssureshbantubilli/EasyPrompting" target="_blank" rel="noopener">
+            View on GitHub →
+          </a>
+        </div>
+
+        <div class="project-card">
+          <div class="project-header">
+            <span class="project-icon">🎂</span>
+            <span class="project-title">Aaru Birthday</span>
+          </div>
+          <p class="project-desc">
+            A beautiful, custom-built HTML birthday celebration page — a heartfelt personal
+            project showcasing creative front-end development skills.
+          </p>
+          <div class="project-tags">
+            <span class="project-tag">HTML</span>
+            <span class="project-tag">CSS</span>
+            <span class="project-tag">Creative</span>
+          </div>
+          <a class="project-link" href="https://github.com/Ssureshbantubilli/aaru-birthday" target="_blank" rel="noopener">
+            View on GitHub →
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ Contact ══ -->
+  <section id="contact">
+    <div class="container">
+      <h2 class="section-title">Get In Touch</h2>
+      <p style="text-align:center;color:var(--muted);margin-bottom:2rem;">
+        Feel free to reach out — I'm always open to interesting projects and collaborations.
+      </p>
+      <div class="contact-cards">
+        <a class="contact-card" href="https://github.com/Ssureshbantubilli" target="_blank" rel="noopener">
+          <span class="contact-card-icon">🐙</span>
+          <span class="contact-card-label">GitHub</span>
+          <span class="contact-card-value">Ssureshbantubilli</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ Footer ══ -->
+  <footer>
+    <p>© 2026 Suresh Bantubilli · Built with ❤️ ·
+      <a href="https://github.com/Ssureshbantubilli/SureshBantubilli-Profile" target="_blank" rel="noopener">Source on GitHub</a>
+    </p>
+  </footer>
+
+</body>
+</html>
