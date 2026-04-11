@@ -613,7 +613,7 @@ footer a{color:var(--cyan);}
     <div class="sec-title">POCs & Open Source</div>
     <div class="sec-sub">REPOSITORY.list · github.com/Ssureshbantubilli</div>
   </div>
-  <div class="proj-grid">
+  <div class="proj-grid" id="proj-grid">
     <a class="proj-card" href="https://github.com/Ssureshbantubilli/AIVirtualDoctor" target="_blank">
       <div class="proj-top"><div class="proj-ico"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.11.82-.26.82-.58v-2.02c-3.34.72-4.04-1.61-4.04-1.61-.54-1.37-1.32-1.74-1.32-1.74-1.08-.74.08-.72.08-.72 1.2.08 1.83 1.23 1.83 1.23 1.06 1.82 2.78 1.29 3.46.99.11-.77.42-1.3.76-1.6-2.66-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 013.01-.4c1.02.01 2.05.14 3.01.4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.61-2.81 5.63-5.48 5.93.43.37.82 1.1.82 2.22v3.29c0 .32.22.7.83.58C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg></div><span class="proj-lang pl-ai">Python · GenAI</span></div>
       <div class="proj-name">AIVirtualDoctor</div>
@@ -1006,6 +1006,82 @@ function grow(el){el.style.height='auto';t=Math.min(el.scrollHeight,92)+'px';}
 
 let tT;
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(tT);tT=setTimeout(()=>t.classList.remove('show'),2400);}
+
+/* ══ DYNAMIC PROJECTS — all GitHub repos, auto-refreshed hourly via localStorage cache ══ */
+(async function(){
+  const GH_USER='Ssureshbantubilli';
+  const CACHE_KEY='skb-gh-cache-v1';
+  const TTL=60*60*1000;
+  const grid=document.getElementById('proj-grid');
+  if(!grid)return;
+
+  function tAgo(iso){
+    const d=Date.now()-new Date(iso).getTime();
+    if(d<60000)return'just now';
+    if(d<3600000)return Math.floor(d/60000)+'m ago';
+    if(d<86400000)return Math.floor(d/3600000)+'h ago';
+    if(d<2592000000)return Math.floor(d/86400000)+'d ago';
+    return Math.floor(d/2592000000)+'mo ago';
+  }
+  function escP(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+  function langCls(l){l=(l||'').toLowerCase();if(l.includes('python'))return'pl-py';if(l.includes('dart')||l.includes('flutter'))return'pl-dt';return'pl-ai';}
+  const GH_ICO='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.44 9.8 8.2 11.38.6.11.82-.26.82-.58v-2.02c-3.34.72-4.04-1.61-4.04-1.61-.54-1.37-1.32-1.74-1.32-1.74-1.08-.74.08-.72.08-.72 1.2.08 1.83 1.23 1.83 1.23 1.06 1.82 2.78 1.29 3.46.99.11-.77.42-1.3.76-1.6-2.66-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.12-.3-.54-1.52.12-3.18 0 0 1.01-.32 3.3 1.23a11.5 11.5 0 013.01-.4c1.02.01 2.05.14 3.01.4 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.61-2.81 5.63-5.48 5.93.43.37.82 1.1.82 2.22v3.29c0 .32.22.7.83.58C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>';
+
+  async function fetchFresh(){
+    const [repos,events]=await Promise.all([
+      fetch(`https://api.github.com/users/${GH_USER}/repos?per_page=100&sort=pushed&type=owner`).then(r=>{if(!r.ok)throw new Error('repos '+r.status);return r.json();}),
+      fetch(`https://api.github.com/users/${GH_USER}/events/public?per_page=100`).then(r=>r.ok?r.json():[]).catch(()=>[])
+    ]);
+    const lastCommit={};
+    for(const ev of events){
+      if(ev.type==='PushEvent'&&ev.repo&&ev.payload&&ev.payload.commits&&ev.payload.commits.length){
+        const name=ev.repo.name.split('/').pop();
+        if(!lastCommit[name]){
+          const c=ev.payload.commits[ev.payload.commits.length-1];
+          lastCommit[name]={msg:c.message,at:ev.created_at};
+        }
+      }
+    }
+    return{ts:Date.now(),repos:repos.filter(r=>!r.fork&&!r.private).map(r=>({
+      name:r.name,desc:r.description||'',lang:r.language||'',
+      stars:r.stargazers_count||0,forks:r.forks_count||0,
+      url:r.html_url,pushed:r.pushed_at,topics:r.topics||[],
+      commit:lastCommit[r.name]||null
+    }))};
+  }
+
+  function render(data){
+    if(!data||!data.repos||!data.repos.length)return false;
+    const html=data.repos.map(r=>{
+      const msg=r.commit?escP(r.commit.msg.split('\n')[0]).slice(0,90):'';
+      const cm=r.commit?`<div style="font-family:var(--mono);font-size:.6rem;color:var(--cyan2);margin-top:.5rem;padding-top:.45rem;border-top:1px dashed var(--border);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">&#9656; ${msg}</div>`:'';
+      const meta=r.pushed?`<div style="font-family:var(--mono);font-size:.56rem;color:var(--muted);margin-top:.35rem;letter-spacing:.03em;">pushed ${tAgo(r.pushed)} &middot; &#9733;${r.stars} &middot; &#8889;${r.forks}</div>`:'';
+      const tagList=(r.topics.length?r.topics:[r.lang].filter(Boolean)).slice(0,4);
+      const tags=tagList.map(t=>`<span class="ptag">${escP(t)}</span>`).join('');
+      return`<a class="proj-card" href="${escP(r.url)}" target="_blank" rel="noopener"><div class="proj-top"><div class="proj-ico">${GH_ICO}</div><span class="proj-lang ${langCls(r.lang)}">${escP(r.lang||'Repo')}</span></div><div class="proj-name">${escP(r.name)}</div><div class="proj-desc">${escP(r.desc||'No description provided.')}</div>${meta}${cm}<div class="proj-tags">${tags}</div></a>`;
+    }).join('');
+    grid.innerHTML=html;
+    return true;
+  }
+
+  let rendered=false;
+  try{
+    const raw=localStorage.getItem(CACHE_KEY);
+    if(raw){
+      const data=JSON.parse(raw);
+      rendered=render(data);
+      if(rendered&&(Date.now()-data.ts<TTL))return;
+    }
+  }catch(e){}
+
+  try{
+    const data=await fetchFresh();
+    localStorage.setItem(CACHE_KEY,JSON.stringify(data));
+    render(data);
+  }catch(e){
+    console.warn('[projects] GitHub fetch failed, keeping fallback:',e);
+  }
+})();
 
 loadData();setInterval(loadData,30000);
 </script>
