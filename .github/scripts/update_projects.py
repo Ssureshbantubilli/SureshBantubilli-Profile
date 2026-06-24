@@ -60,20 +60,15 @@ def esc(s):
     )
 
 
-def tago(iso):
+def fmt_date(iso):
+    """Absolute date like '11 Apr 2026'. Absolute (not relative) so the
+    rendered HTML only diffs when pushed_at actually changes — otherwise
+    relative times like '5h ago' would drift every hour and cause noise
+    commits."""
     if not iso:
         return ""
     dt = datetime.fromisoformat(iso.replace("Z", "+00:00"))
-    d = (datetime.now(timezone.utc) - dt).total_seconds()
-    if d < 60:
-        return "just now"
-    if d < 3600:
-        return f"{int(d/60)}m ago"
-    if d < 86400:
-        return f"{int(d/3600)}h ago"
-    if d < 2592000:
-        return f"{int(d/86400)}d ago"
-    return f"{int(d/2592000)}mo ago"
+    return dt.strftime("%d %b %Y")
 
 
 def lang_cls(l):
@@ -129,7 +124,7 @@ def main():
 
         meta = (
             f'<div style="font-family:var(--mono);font-size:.56rem;color:var(--muted);'
-            f'margin-top:.35rem;letter-spacing:.03em;">pushed {tago(pushed)} '
+            f'margin-top:.35rem;letter-spacing:.03em;">pushed {fmt_date(pushed)} '
             f"&middot; &#9733;{stars} &middot; &#8889;{forks}</div>"
             if pushed
             else ""
@@ -160,8 +155,10 @@ def main():
         )
         cards.append(card)
 
-    now_utc = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-    body = "\n    " + "\n    ".join(cards) + f"\n    <!-- last_refresh: {now_utc} -->\n    "
+    # NOTE: deliberately no timestamp marker — the workflow uses `git diff`
+    # to decide whether to commit, so only *actual* repo changes produce
+    # commits. Freshness is evident from the auto-commit timestamp in git log.
+    body = "\n    " + "\n    ".join(cards) + "\n    "
 
     with open(INDEX, "r", encoding="utf-8") as f:
         html = f.read()
@@ -178,7 +175,7 @@ def main():
     with open(INDEX, "w", encoding="utf-8") as f:
         f.write(new_html)
 
-    print(f"rendered {len(cards)} cards at {now_utc}")
+    print(f"rendered {len(cards)} cards")
 
 
 if __name__ == "__main__":
